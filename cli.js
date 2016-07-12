@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// This file is intentionally left as ES5.
+
 if (!global._babelPolyfill) {
   require('babel-register')
   require('babel-polyfill')
