@@ -35,14 +35,15 @@ async function checkFile (markdownFiles, directoryPaths, sourceDirPath, dirPath,
     .filter(reference => !reference.href.startsWith('http'))
     .reduce((acc, reference) => {
       const referenceHref = path.join(dirPath, reference.href)
-      const hasMarkdownExtension = referenceHref.endsWith('.md')
-      if (hasMarkdownExtension) {
+      if (referenceHref.endsWith('.md')) {
         if (!isValidMarkdownFile(referenceHref)) {
-          acc.push({reference, problem: 'Reference href has a ".md" extension but is not a valid Markdown file'})
+          acc.push({reference, message: 'reference href has a ".md" extension but is not a valid Markdown file'})
         }
       } else {
-        if (!isDirectoryPath(referenceHref)) {
-          acc.push({reference, problem: 'Reference href has no ".md" extension but is not a valid directory path'})
+        if (referenceHref.endsWith('.html')) {
+          acc.push({reference, message: 'reference href has ".html" extension but it should have a ".md" extension'})
+        } else if (!isDirectoryPath(referenceHref)) {
+          acc.push({reference, message: 'reference href has no ".md" extension but is not a valid directory path'})
         }
       }
       return acc
