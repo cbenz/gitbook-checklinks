@@ -52,25 +52,38 @@ async function checkFile (markdownFiles, directoryPaths, sourceDirPath, dirPath,
 }
 
 async function checkFiles (markdownFiles, sourceDirPath) {
-  const deadLinksByFilePath = {}
+  const problemsByFilePath = {}
   const directoryPaths = markdownFiles
     .filter(filePath => filePath.includes('/'))
     .map(filePath => filePath.split('/').slice(0, -1).join('/'))
   for (let filePath of markdownFiles) {
     const dirPath = path.dirname(filePath)
     const fileName = path.basename(filePath)
-    const deadLinks = await checkFile(markdownFiles, directoryPaths, sourceDirPath, dirPath, fileName)
-    if (deadLinks.length) {
-      deadLinksByFilePath[filePath] = deadLinks
+    const problems = await checkFile(markdownFiles, directoryPaths, sourceDirPath, dirPath, fileName)
+    if (problems.length) {
+      problemsByFilePath[filePath] = problems
     }
   }
-  return deadLinksByFilePath
+  return problemsByFilePath
+}
+
+function renderProblems (problemsByFilePath) {
+  if (Object.keys(problemsByFilePath).length === 0) {
+    return
+  }
+  console.log('# Problems')
+  for (const filePath in problemsByFilePath) {
+    console.log(`\n## In file \`${filePath}\`\n`)
+    for (const problem of problemsByFilePath[filePath]) {
+      console.log(`- ${problem.message}: [${problem.reference.title}](${problem.reference.href})`)
+    }
+  }
 }
 
 export default function main (sourceDirPath) {
   const markdownFiles = readDirRecursive(sourceDirPath)
   checkFiles(markdownFiles, sourceDirPath).then(
-    deadLinks => console.log(JSON.stringify(deadLinks, null, 2)),
+    renderProblems,
     e => console.error(e.stack)
   )
 }
