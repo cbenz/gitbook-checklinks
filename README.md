@@ -1,5 +1,13 @@
 # GitBook internal links checker
 
+## DISCONTINUED!
+
+I do not work on that project anymore. There is a solution to detect dangling links, even in a programmatic way.
+
+See [this line of `package.json`](https://github.com/openfisca/openfisca-doc/blob/fe4417aafa70df45885509ca8b43f30a618e94b8/package.json#L15) which fails if `gitbook build` produces any *warning*.
+
+## Presentation
+
 This program checks dead links in GitBook source code repositories, especially internal links to other `.md` files.
 
 To check dead links in general, please use a dedicated software
